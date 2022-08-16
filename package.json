@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "grammy": "^1.10.1",
+    "mongodb": "^4.8.1"
+  }
+}
