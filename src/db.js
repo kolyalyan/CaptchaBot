@@ -1,7 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const mongodb_1 = require("mongodb");
-const mongoURL = "mongodb://127.0.0.1:27017/";
+import { MongoClient } from 'mongodb';
+const mongoURL = 'mongodb://127.0.0.1:27017/';
 const mongoOptions = {
     socketTimeoutMS: 0,
     keepAlive: true,
@@ -9,7 +7,7 @@ const mongoOptions = {
     dbName: 'CaptchaBot'
 };
 const initDB = async () => {
-    let client = await mongodb_1.MongoClient.connect(mongoURL, mongoOptions);
+    let client = await MongoClient.connect(mongoURL, mongoOptions);
     return client.db('CaptchaBot');
 };
-exports.default = initDB;
+export default initDB;
