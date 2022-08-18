@@ -13,7 +13,7 @@ export class Captcha {
     public keyboard!: InlineKeyboard;
 
     constructor(user: User){
-        if(!user.id) return;
+        if (!user.id) return;
 
         this.buttons = this.generateButtons(BUTTONS_COUNT);
         this.answer = this.buttons[Math.floor(Math.random() * BUTTONS_COUNT)];
@@ -66,7 +66,7 @@ export class Captcha {
         if (buttons.length > 1) {
             const button: string = String(buttons.pop());
             keyboard = this.generateKeyboard(buttons).text(button, button);
-        }else{
+        } else {
             keyboard = new InlineKeyboard().text(buttons[0], buttons[0]); 
         }
 

@@ -102,7 +102,7 @@ bot.on('callback_query:data', async (ctx) => {
         return;
     }
 
-    if(document.captcha_answer === ctx.callbackQuery.data){
+    if (document.captcha_answer === ctx.callbackQuery.data) {
         clearTimeout(timer);
             
         const timer_id = `${ctx.chat?.id}_${ctx.from.id}`;
@@ -117,7 +117,7 @@ bot.on('callback_query:data', async (ctx) => {
             chat_id: ctx.chat?.id,
             user_id: ctx.from.id
         });
-    }else{
+    } else {
         await ctx.answerCallbackQuery({
             text: 'Ответ неверный, попробуйте ещё раз!'
         });
