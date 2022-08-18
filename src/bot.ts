@@ -13,10 +13,10 @@ let collection: Collection<NewMember> = db.collection<NewMember>('new_users');
 
 let timer: ReturnType<typeof setTimeout>;
 let timerRunning: TimerFlag = {
-    "initializator": true
+    'initializator': true
 };
 
-bot.command("start", async (ctx) => ctx.reply(
+bot.command('start', async (ctx) => ctx.reply(
     `Здравствуйте!
     Я кораблик Дюрандаль, кидаю всем капчу. Чтобы отправить в добрый путь по отлову спамеров, просто добавье меня в вашу группу.`
 ));
@@ -51,7 +51,7 @@ bot.on(':new_chat_members', async (ctx) => {
     });
 });
 
-bot.on("message", async (ctx) => {
+bot.on('message', async (ctx) => {
     if ((ctx.chat.id >= 0) || (!ctx.message.text)) return;
 
     const document = await collection.findOne({
