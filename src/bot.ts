@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import { Bot } from 'grammy';
 import { Collection } from 'mongodb';
-import { Captcha } from './captcha';
-import initDB from './db';
+import { Captcha } from './captcha.js';
+import initDB from './db.js';
 import { NewMember, TimerFlag } from './interfaces';
 
 const bot_token: string = process.env.BOT_TOKEN ?? 'dummy_token';
