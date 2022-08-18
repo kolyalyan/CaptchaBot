@@ -36,7 +36,7 @@ bot.on(':new_chat_members', async (ctx) => {
             chat_id: ctx.chat.id,
             user_id: user.id,
             first_name: user.first_name,
-            last_name: user.last_name ? user.last_name : '',
+            last_name: user.last_name ?? '',
             captcha_answer: captcha.answer
         });
                     
@@ -76,7 +76,7 @@ bot.on('message', async (ctx) => {
         chat_id: ctx.chat.id,
         user_id: ctx.from.id,
         first_name: ctx.from.first_name,
-        last_name: ctx.from.last_name ? ctx.from.last_name : '',
+        last_name: ctx.from.last_name ?? '',
         captcha_answer: captcha.answer
     });
 

@@ -1,5 +1,5 @@
 import { InlineKeyboard } from 'grammy';
-import { MessageEntity, User } from 'grammy/out/types.node';
+import { InlineKeyboardButton, MessageEntity, User } from 'grammy/out/types.node';
 
 const BUTTONS_COUNT: number = 5;
 
@@ -8,19 +8,20 @@ export class Captcha {
 
     public text!: string;
     public entities!: MessageEntity[];
-    public buttons!: string[];
     public answer!: string;
     public keyboard!: InlineKeyboard;
 
     constructor(user: User){
         if (!user.id) return;
 
-        this.buttons = this.generateButtons(BUTTONS_COUNT);
-        this.answer = this.buttons[Math.floor(Math.random() * BUTTONS_COUNT)];
+        this.keyboard = this.generateKeyboard(BUTTONS_COUNT);
+
+        const keyboardButtons: InlineKeyboardButton[] = this.keyboard.inline_keyboard[0];
+        this.answer = keyboardButtons[Math.floor(Math.random() * BUTTONS_COUNT)].text;
 
         const notBot: string = 'не бот';
         const notSpamer: string = 'не спамер';
-        const name: string = user.first_name + (user.last_name ? user.last_name : '');
+        const name: string = `${user.first_name} ${user.last_name ?? ''}`.trim();
 
         this.text = `❗️ВАЖНО: ${name}, если ты не бот и не спамер, пройди проверку, нажав на кнопку, где есть ${this.answer}:`;
 
@@ -41,11 +42,10 @@ export class Captcha {
             user: user
         };
             
-        this.entities = [botBold, spamBold, mention];
-        this.keyboard = this.generateKeyboard(this.buttons).row();         
+        this.entities = [botBold, spamBold, mention];      
     }
 
-    public generateButtons(buttonsCount: number){
+    public generateKeyboard(buttonsCount: number){
         let nutritionsArray: string[] = Array().concat([], this.availableNutritions);
         let buttonsArray: string[] = [];
         
@@ -57,9 +57,14 @@ export class Captcha {
             nutritionsArray.splice(randomIndex, 1);
         }
 
-        return buttonsArray;
-    }
+        let keyboard: InlineKeyboard = buttonsArray.reduce(
+            (previousValue, currentValue, index) => previousValue.text(currentValue, currentValue),
+            new InlineKeyboard()
+        );
 
+        return keyboard.row();
+    }
+/*
     public generateKeyboard(buttons: string[]){
         let keyboard!: InlineKeyboard;
 
@@ -72,4 +77,12 @@ export class Captcha {
 
         return keyboard;
     }
+
+    public generateKeyboard(buttons: string[]){
+        return buttons.reduce(
+            (previousValue, currentValue) => previousValue.text(currentValue, currentValue),
+            new InlineKeyboard()
+        )
+    }
+*/
 }
