@@ -95,11 +95,9 @@ bot.on('callback_query:data', async (ctx) => {
     });
 
     if (!document){
-        await ctx.answerCallbackQuery({
+        return ctx.answerCallbackQuery({
             text: 'Так, не жмякай тут чужое, фу!',
         });
-
-        return;
     }
 
     if (document.captcha_answer === ctx.callbackQuery.data) {
