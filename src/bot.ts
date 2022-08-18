@@ -8,12 +8,8 @@ import { NewMember, TimerFlag } from './interfaces';
 const bot_token: string = process.env.BOT_TOKEN ?? 'dummy_token';
 const bot = new Bot(bot_token);
 
-//let db = await initDB();
-//let collection: Collection<NewMember> = db.collection<NewMember>('new_users');
-let collection: Collection<NewMember>;
-initDB().then((db) => {
-    collection = db.collection<NewMember>('new_users');
-});
+let db = await initDB();
+let collection: Collection<NewMember> = db.collection<NewMember>('new_users');
 
 let timer: ReturnType<typeof setTimeout>;
 let timerRunning: TimerFlag = {
@@ -31,7 +27,7 @@ bot.on(':new_chat_members', async (ctx) => {
     if (!newUsers) return;
 
     newUsers.forEach(async (user) => {
-        //if (user.is_bot) return;
+        if (user.is_bot) return;
                 
         const captcha = new Captcha(user);
         const message = await ctx.reply(captcha.text, {entities: captcha.entities, reply_markup: captcha.keyboard});
