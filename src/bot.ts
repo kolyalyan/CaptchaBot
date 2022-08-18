@@ -26,7 +26,7 @@ bot.on(':new_chat_members', async (ctx) => {
 
     if (!newUsers) return;
 
-    newUsers.forEach(async (user) => {
+    await Promise.all(newUsers.map((user) => (async () => {
         if (user.is_bot) return;
                 
         const captcha = new Captcha(user);
@@ -43,12 +43,12 @@ bot.on(':new_chat_members', async (ctx) => {
         const timer_id = `${ctx.chat.id}_${ user.id}`;
 
         timer = setTimeout(async () => {
-            bot.api.deleteMessage(ctx.chat.id, message.message_id);
+            await bot.api.deleteMessage(ctx.chat.id, message.message_id);
             timerRunning[timer_id] = false;
         }, 20000);
 
         timerRunning[timer_id] = true;
-    });
+    })()));
 });
 
 bot.on('message', async (ctx) => {
@@ -61,7 +61,7 @@ bot.on('message', async (ctx) => {
 
     if (!document) return;
             
-    ctx.deleteMessage();
+    await ctx.deleteMessage();
 
     const timer_id = `${ctx.chat.id}_${ctx.from.id}`;
 
@@ -81,7 +81,7 @@ bot.on('message', async (ctx) => {
     });
 
     timer = setTimeout(async () => {
-        bot.api.deleteMessage(ctx.chat.id, message.message_id); 
+        await bot.api.deleteMessage(ctx.chat.id, message.message_id); 
         timerRunning[timer_id] = false;
     }, 20000);
 
@@ -110,11 +110,13 @@ bot.on('callback_query:data', async (ctx) => {
             text: 'Капча успешно пройдена, добро пожаловать в чат!'
         });
 
-        ctx.deleteMessage();
-        collection.deleteOne({
-            chat_id: ctx.chat?.id,
-            user_id: ctx.from.id
-        });
+        await Promise.all([
+            ctx.deleteMessage(),
+            collection.deleteOne({
+                chat_id: ctx.chat?.id,
+                user_id: ctx.from.id
+            })
+        ]);
     } else {
         await ctx.answerCallbackQuery({
             text: 'Ответ неверный, попробуйте ещё раз!'
