@@ -11,7 +11,6 @@ const bot = new Bot(bot_token);
 let db = await initDB();
 let collection: Collection<NewMember> = db.collection<NewMember>('new_users');
 
-//let timer: ReturnType<typeof setTimeout>;
 let timersRunning = new Map();
 
 bot.command('start', async (ctx) => ctx.reply(
