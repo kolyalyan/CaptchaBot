@@ -45,7 +45,7 @@ export class Captcha {
         this.entities = [botBold, spamBold, mention];      
     }
 
-    public generateKeyboard(buttonsCount: number){
+    private generateKeyboard(buttonsCount: number){
         let nutritionsArray: string[] = Array().concat([], this.availableNutritions);
         let buttonsArray: string[] = [];
         
@@ -64,25 +64,4 @@ export class Captcha {
 
         return keyboard.row();
     }
-/*
-    public generateKeyboard(buttons: string[]){
-        let keyboard!: InlineKeyboard;
-
-        if (buttons.length > 1) {
-            const button: string = String(buttons.pop());
-            keyboard = this.generateKeyboard(buttons).text(button, button);
-        } else {
-            keyboard = new InlineKeyboard().text(buttons[0], buttons[0]); 
-        }
-
-        return keyboard;
-    }
-
-    public generateKeyboard(buttons: string[]){
-        return buttons.reduce(
-            (previousValue, currentValue) => previousValue.text(currentValue, currentValue),
-            new InlineKeyboard()
-        )
-    }
-*/
 }

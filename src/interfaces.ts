@@ -5,7 +5,3 @@ export interface NewMember {
     last_name: string,
     captcha_answer: string
 };
-
-export interface TimerFlag {
-    [key: string]: boolean
-};

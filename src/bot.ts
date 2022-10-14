@@ -3,7 +3,7 @@ import { Bot } from 'grammy';
 import { Collection } from 'mongodb';
 import { Captcha } from './captcha.js';
 import initDB from './db.js';
-import { NewMember, TimerFlag } from './interfaces';
+import { NewMember } from './interfaces';
 
 const bot_token: string = process.env.BOT_TOKEN ?? 'dummy_token';
 const bot = new Bot(bot_token);
@@ -11,10 +11,8 @@ const bot = new Bot(bot_token);
 let db = await initDB();
 let collection: Collection<NewMember> = db.collection<NewMember>('new_users');
 
-let timer: ReturnType<typeof setTimeout>;
-let timerRunning: TimerFlag = {
-    'initializator': true
-};
+//let timer: ReturnType<typeof setTimeout>;
+let timersRunning = new Map();
 
 bot.command('start', async (ctx) => ctx.reply(
     `Здравствуйте!
@@ -42,12 +40,12 @@ bot.on(':new_chat_members', async (ctx) => {
                     
         const timer_id = `${ctx.chat.id}_${ user.id}`;
 
-        timer = setTimeout(async () => {
+        const timer = setTimeout(async () => {
             await bot.api.deleteMessage(ctx.chat.id, message.message_id);
-            timerRunning[timer_id] = false;
+            timersRunning.delete(timer_id);
         }, 20000);
 
-        timerRunning[timer_id] = true;
+        timersRunning.set(timer_id, timer);
     })()));
 });
 
@@ -65,7 +63,7 @@ bot.on('message', async (ctx) => {
 
     const timer_id = `${ctx.chat.id}_${ctx.from.id}`;
 
-    if (timerRunning[timer_id]) return;
+    if (timersRunning.get(timer_id)) return;
         
     await collection.deleteOne({chat_id: ctx.chat.id, user_id: ctx.from.id});
 
@@ -80,12 +78,12 @@ bot.on('message', async (ctx) => {
         captcha_answer: captcha.answer
     });
 
-    timer = setTimeout(async () => {
+    const timer = setTimeout(async () => {
         await bot.api.deleteMessage(ctx.chat.id, message.message_id); 
-        timerRunning[timer_id] = false;
+        timersRunning.delete(timer_id);
     }, 20000);
 
-    timerRunning[timer_id] = true;
+    timersRunning.set(timer_id, timer);
 });
 
 bot.on('callback_query:data', async (ctx) => {
@@ -100,11 +98,11 @@ bot.on('callback_query:data', async (ctx) => {
         });
     }
 
-    if (document.captcha_answer === ctx.callbackQuery.data) {
-        clearTimeout(timer);
-            
+    if (document.captcha_answer === ctx.callbackQuery.data) {            
         const timer_id = `${ctx.chat?.id}_${ctx.from.id}`;
-        timerRunning[timer_id] = false;
+
+        clearTimeout(timersRunning.get(timer_id));
+        timersRunning.delete(timer_id);
 
         await ctx.answerCallbackQuery({
             text: 'Капча успешно пройдена, добро пожаловать в чат!'
